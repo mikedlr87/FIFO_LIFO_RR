@@ -99,3 +99,51 @@ void ejecutarLIFO(vector<Proceso>& procesos) {
     }
 }
 
+void ejecutarRR(vector<Proceso>& procesos, double Q) {
+    sort(procesos.begin(), procesos.end(), [](const Proceso& a, const Proceso& b) {
+        return a.ti < b.ti;
+    });
+
+    int n = procesos.size();
+    queue<int> cola;
+    double tiempo_actual = 0;
+    int idx_ingreso = 0;
+    int completados = 0;
+
+    if (n > 0) {
+        tiempo_actual = procesos[0].ti;
+        cola.push(0);
+        idx_ingreso = 1;
+    }
+
+    while (completados < n) {
+        if (cola.empty()) {
+            if (idx_ingreso < n) {
+                tiempo_actual = procesos[idx_ingreso].ti;
+                cola.push(idx_ingreso);
+                idx_ingreso++;
+            }
+            continue;
+        }
+
+        int i = cola.front();
+        cola.pop();
+
+        double tiempo_ejecucion = min(Q, procesos[i].t_restante);
+        tiempo_actual += tiempo_ejecucion;
+        procesos[i].t_restante -= tiempo_ejecucion;
+
+        while (idx_ingreso < n && procesos[idx_ingreso].ti <= tiempo_actual) {
+            cola.push(idx_ingreso);
+            idx_ingreso++;
+        }
+
+        if (procesos[i].t_restante > 0) {
+            cola.push(i);
+        } else {
+            procesos[i].tf = tiempo_actual;
+            completados++;
+        }
+    }
+}
+
