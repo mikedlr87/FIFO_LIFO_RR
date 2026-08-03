@@ -147,3 +147,27 @@ void ejecutarRR(vector<Proceso>& procesos, double Q) {
     }
 }
 
+
+void escribirResultados(ofstream& out, const string& nombre_metodo, vector<Proceso>& procesos, 
+                        double prom_T, double prom_E, double prom_I, long long microsegundos) {
+    out << "========================================================================\n";
+    out << "METODO: " << nombre_metodo << "\n";
+    out << "Tiempo de calculo del algoritmo: " << microsegundos << " microsegundos\n";
+    out << "------------------------------------------------------------------------\n";
+    out << left << setw(5) << "ID" << setw(10) << "ti" << setw(10) << "t" 
+        << setw(10) << "tf" << setw(10) << "T" << setw(10) << "E" << setw(10) << "I" << "\n";
+    
+
+    sort(procesos.begin(), procesos.end(), [](const Proceso& a, const Proceso& b) {
+        return a.id < b.id;
+    });
+
+    for (const auto& p : procesos) {
+        out << left << setw(5) << p.id 
+            << setw(10) << p.ti << setw(10) << p.t 
+            << setw(10) << p.tf << setw(10) << p.T 
+            << setw(10) << p.E << setw(10) << fixed << setprecision(4) << p.I << "\n";
+    }
+    out << "------------------------------------------------------------------------\n";
+    out << "Promedios -> T: " << prom_T << " | E: " << prom_E << " | I: " << prom_I << "\n\n";
+}
