@@ -222,3 +222,37 @@ int main() {
         cout << "Error: No se leyeron procesos. Revisa el formato de datos.txt" << endl;
         return 1;
     }
+
+
+    ofstream salida("resultados.txt");
+    
+    double pT_FIFO, pE_FIFO, pI_FIFO;
+    double pT_LIFO, pE_LIFO, pI_LIFO;
+    double pT_RR, pE_RR, pI_RR;
+
+    // FIFO
+    reiniciarProcesos(procesos);
+    auto start = high_resolution_clock::now();
+    ejecutarFIFO(procesos);
+    auto stop = high_resolution_clock::now();
+    auto duration_fifo = duration_cast<microseconds>(stop - start).count();
+    calcularMetricas(procesos, pT_FIFO, pE_FIFO, pI_FIFO);
+    escribirResultados(salida, "FIFO", procesos, pT_FIFO, pE_FIFO, pI_FIFO, duration_fifo);
+
+    // LIFO
+    reiniciarProcesos(procesos);
+    start = high_resolution_clock::now();
+    ejecutarLIFO(procesos);
+    stop = high_resolution_clock::now();
+    auto duration_lifo = duration_cast<microseconds>(stop - start).count();
+    calcularMetricas(procesos, pT_LIFO, pE_LIFO, pI_LIFO);
+    escribirResultados(salida, "LIFO", procesos, pT_LIFO, pE_LIFO, pI_LIFO, duration_lifo);
+
+    // RR
+    reiniciarProcesos(procesos);
+    start = high_resolution_clock::now();
+    ejecutarRR(procesos, quantum);
+    stop = high_resolution_clock::now();
+    auto duration_rr = duration_cast<microseconds>(stop - start).count();
+    calcularMetricas(procesos, pT_RR, pE_RR, pI_RR);
+    escribirResultados(salida, "ROUND ROBIN (Q=" + to_string(quantum) + ")", procesos, pT_RR, pE_RR, pI_RR, duration_rr);
