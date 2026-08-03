@@ -171,3 +171,54 @@ void escribirResultados(ofstream& out, const string& nombre_metodo, vector<Proce
     out << "------------------------------------------------------------------------\n";
     out << "Promedios -> T: " << prom_T << " | E: " << prom_E << " | I: " << prom_I << "\n\n";
 }
+
+
+int main() {
+    vector<Proceso> procesos;
+    ifstream archivo("datos.txt");
+    
+    if (!archivo.is_open()) {
+        cout << "Error: No se encontro 'datos.txt'." << endl;
+        return 1;
+    }
+
+    string linea;
+    double quantum;
+
+    cout << "Ingrese el valor del Quantum (Q) para Round Robin: ";
+    cin >> quantum;
+
+
+    while (getline(archivo, linea)) {
+  
+        for (char& c : linea) {
+            if (c == '(' || c == ')' || c == '\t' || c == ' ') {
+                c = ',';
+            }
+        }
+        
+        stringstream ss(linea);
+        string item;
+        vector<string> tokens;
+        
+        while (getline(ss, item, ',')) {
+            if (!item.empty()) { 
+                tokens.push_back(item);
+            }
+        }
+        
+       
+        if (tokens.size() >= 3) {
+            Proceso p;
+            p.id = tokens[0];
+            p.ti = stod(tokens[1]);
+            p.t = stod(tokens[2]);
+            procesos.push_back(p);
+        }
+    }
+    archivo.close();
+
+    if(procesos.empty()) {
+        cout << "Error: No se leyeron procesos. Revisa el formato de datos.txt" << endl;
+        return 1;
+    }
