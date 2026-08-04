@@ -256,3 +256,22 @@ int main() {
     auto duration_rr = duration_cast<microseconds>(stop - start).count();
     calcularMetricas(procesos, pT_RR, pE_RR, pI_RR);
     escribirResultados(salida, "ROUND ROBIN (Q=" + to_string(quantum) + ")", procesos, pT_RR, pE_RR, pI_RR, duration_rr);
+
+    salida << "========================================================================\n";
+    salida << "CONCLUSION\n";
+    salida << "========================================================================\n";
+    
+    string mejor = "FIFO";
+    double menor_E = pE_FIFO;
+
+    if (pE_LIFO < menor_E) { mejor = "LIFO"; menor_E = pE_LIFO; }
+    if (pE_RR < menor_E) { mejor = "ROUND ROBIN"; menor_E = pE_RR; }
+
+    salida << "El mejor algoritmo para este conjunto es: " << mejor << "\n";
+    salida << "Razon: Menor Tiempo de Espera (E) promedio (" << fixed << setprecision(4) << menor_E << ").\n";
+
+    salida.close();
+    cout << "Calculos correctos. Revisa el archivo 'resultados.txt'." << endl;
+
+    return 0;
+}
